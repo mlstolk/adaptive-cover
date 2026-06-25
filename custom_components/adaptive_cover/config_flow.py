@@ -619,6 +619,14 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                 CONF_DEFAULT_HEIGHT: self.config.get(CONF_DEFAULT_HEIGHT),
                 CONF_MAX_POSITION: self.config.get(CONF_MAX_POSITION),
                 CONF_MIN_POSITION: self.config.get(CONF_MIN_POSITION),
+                CONF_ENABLE_MAX_POSITION: self.config.get(
+                    CONF_ENABLE_MAX_POSITION, False
+                ),
+                CONF_ENABLE_MIN_POSITION: self.config.get(
+                    CONF_ENABLE_MIN_POSITION, False
+                ),
+                CONF_MAX_POSITION_ENTITY: self.config.get(CONF_MAX_POSITION_ENTITY),
+                CONF_MIN_POSITION_ENTITY: self.config.get(CONF_MIN_POSITION_ENTITY),
                 CONF_FOV_LEFT: self.config.get(CONF_FOV_LEFT),
                 CONF_FOV_RIGHT: self.config.get(CONF_FOV_RIGHT),
                 CONF_ENTITIES: self.config.get(CONF_ENTITIES),
