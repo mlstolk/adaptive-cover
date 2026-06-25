@@ -41,6 +41,8 @@
           "distance_shaded_area": "Shaded area",
           "default_percentage": "Default Position",
           "max_position": "Maximum Position",
+          "max_position_entity": "Entity that limits the dynamic maximum position",
+          "min_position_entity": "Entity that limits the dynamic minimum position",
           "fov_left": "Field of view left",
           "fov_right": "Field of view right",
           "group": "Cover Entities",
@@ -60,6 +62,8 @@
           "distance_shaded_area": "Distance from cover to shaded area in meters",
           "default_percentage": "Default cover position as a percentage",
           "max_position": "Maximum adjustable cover position as a percentage",
+          "max_position_entity": "Dynamic maximum cover position as a percentage. Active when the maximum position is enabled and this entity's value is lower than the static maximum position.",
+          "min_position_entity": "Dynamic minimum cover position as a percentage. Active when the minimum position is enabled and this entity's value is higher than the static minimum position.",
           "fov_left": "Field of view angle to the left of the window center",
           "fov_right": "Field of view angle to the right of the window center",
           "group": "Select entities to control via integration",
@@ -101,7 +105,9 @@
         "title": "Climate settings"
       },
       "weather": {
-        "data": { "weather_state": "Weather Conditions" },
+        "data": {
+          "weather_state": "Weather Conditions"
+        },
         "data_description": {
           "weather_state": "Choose the weather conditions that enable automatic window control."
         },
@@ -116,6 +122,8 @@
           "distance_shaded_area": "Shaded area",
           "default_percentage": "Default Position",
           "max_position": "Maximum Position",
+          "max_position_entity": "Entity that limits the dynamic maximum position",
+          "min_position_entity": "Entity that limits the dynamic minimum position",
           "fov_left": "Field of view left",
           "fov_right": "Field of view right",
           "group": "Cover Entities",
@@ -137,6 +145,8 @@
           "distance_shaded_area": "Distance from cover to shaded area in meters",
           "default_percentage": "Default cover position as a percentage",
           "max_position": "Maximum adjustable cover position as a percentage",
+          "max_position_entity": "Dynamic maximum cover position as a percentage. Active when the maximum position is enabled and this entity's value is lower than the static maximum position.",
+          "min_position_entity": "Dynamic minimum cover position as a percentage. Active when the minimum position is enabled and this entity's value is higher than the static minimum position.",
           "fov_left": "Field of view degrees to the left of the window center",
           "fov_right": "Field of view degrees to the right of the window center",
           "group": "Select entities to control via integration",
@@ -155,6 +165,8 @@
           "slat_distance": "Slat Spacing",
           "default_percentage": "Default Position",
           "max_position": "Maximum Position",
+          "max_position_entity": "Entity that limits the dynamic maximum position",
+          "min_position_entity": "Entity that limits the dynamic minimum position",
           "fov_left": "Field of view left",
           "fov_right": "Field of view right",
           "group": "Cover Entities",
@@ -175,6 +187,8 @@
           "slat_distance": "Vertical distance between two slats in centimeters",
           "default_percentage": "Default cover position as a percentage",
           "max_position": "Maximum adjustable cover position as a percentage",
+          "max_position_entity": "Dynamic maximum cover position as a percentage. Active when the maximum position is enabled and this entity's value is lower than the static maximum position.",
+          "min_position_entity": "Dynamic minimum cover position as a percentage. Active when the minimum position is enabled and this entity's value is higher than the static minimum position.",
           "fov_left": "Degrees to consider from the left side of the window center",
           "fov_right": "Degrees to consider from the right side of the window center",
           "group": "Select entities to control via integration",
@@ -261,6 +275,8 @@
           "distance_shaded_area": "Shaded area",
           "default_percentage": "Default Position",
           "max_position": "Maximum Position",
+          "max_position_entity": "Entity that limits the dynamic maximum position",
+          "min_position_entity": "Entity that limits the dynamic minimum position",
           "fov_left": "Field of view left",
           "fov_right": "Field of view right",
           "group": "Cover Entities",
@@ -280,6 +296,8 @@
           "distance_shaded_area": "Distance from cover to shaded area in meters",
           "default_percentage": "Default cover position as a percentage",
           "max_position": "Maximum adjustable cover position as a percentage",
+          "max_position_entity": "Dynamic maximum cover position as a percentage. Active when the maximum position is enabled and this entity's value is lower than the static maximum position.",
+          "min_position_entity": "Dynamic minimum cover position as a percentage. Active when the minimum position is enabled and this entity's value is higher than the static minimum position.",
           "fov_left": "Field of view angle to the left of the window center",
           "fov_right": "Field of view angle to the right of the window center",
           "group": "Select entities to control via integration",
@@ -321,7 +339,9 @@
         "title": "Climate settings"
       },
       "weather": {
-        "data": { "weather_state": "Weather Conditions" },
+        "data": {
+          "weather_state": "Weather Conditions"
+        },
         "data_description": {
           "weather_state": "Choose the weather conditions that enable automatic window control."
         },
@@ -336,6 +356,8 @@
           "distance_shaded_area": "Shaded area",
           "default_percentage": "Default Position",
           "max_position": "Maximum Position",
+          "max_position_entity": "Entity that limits the dynamic maximum position",
+          "min_position_entity": "Entity that limits the dynamic minimum position",
           "fov_left": "Field of view left",
           "fov_right": "Field of view right",
           "group": "Cover Entities",
@@ -357,6 +379,8 @@
           "distance_shaded_area": "Distance from cover to shaded area in meters",
           "default_percentage": "Default cover position as a percentage",
           "max_position": "Maximum adjustable cover position as a percentage",
+          "max_position_entity": "Dynamic maximum cover position as a percentage. Active when the maximum position is enabled and this entity's value is lower than the static maximum position.",
+          "min_position_entity": "Dynamic minimum cover position as a percentage. Active when the minimum position is enabled and this entity's value is higher than the static minimum position.",
           "fov_left": "Field of view degrees to the left of the window center",
           "fov_right": "Field of view degrees to the right of the window center",
           "group": "Select entities to control via integration",
@@ -375,6 +399,8 @@
           "slat_distance": "Slat Spacing",
           "default_percentage": "Default Position",
           "max_position": "Maximum Position",
+          "max_position_entity": "Entity that limits the dynamic maximum position",
+          "min_position_entity": "Entity that limits the dynamic minimum position",
           "fov_left": "Field of view left",
           "fov_right": "Field of view right",
           "group": "Cover Entities",
@@ -395,6 +421,8 @@
           "slat_distance": "Vertical distance between two slats in centimeters",
           "default_percentage": "Default cover position as a percentage",
           "max_position": "Maximum adjustable cover position as a percentage",
+          "max_position_entity": "Dynamic maximum cover position as a percentage. Active when the maximum position is enabled and this entity's value is lower than the static maximum position.",
+          "min_position_entity": "Dynamic minimum cover position as a percentage. Active when the minimum position is enabled and this entity's value is higher than the static minimum position.",
           "fov_left": "Degrees to consider from the left side of the window center",
           "fov_right": "Degrees to consider from the right side of the window center",
           "group": "Select entities to control via integration",

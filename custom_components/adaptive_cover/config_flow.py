@@ -75,6 +75,8 @@ from .const import (
     CONF_MIN_POSITION,
     CONF_ENABLE_MAX_POSITION,
     CONF_ENABLE_MIN_POSITION,
+    CONF_MAX_POSITION_ENTITY,
+    CONF_MIN_POSITION_ENTITY,
     CONF_IS_HUB,
     ALL_BLINDS_TITLE,
 )
@@ -121,6 +123,12 @@ OPTIONS = vol.Schema(
             vol.Coerce(int), vol.Range(min=0, max=99)
         ),
         vol.Optional(CONF_ENABLE_MIN_POSITION, default=False): bool,
+        vol.Optional(CONF_MAX_POSITION_ENTITY): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain=["input_number"])
+        ),
+        vol.Optional(CONF_MIN_POSITION_ENTITY): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain=["input_number"])
+        ),
         vol.Optional(CONF_MIN_ELEVATION): vol.All(
             vol.Coerce(int), vol.Range(min=0, max=90)
         ),
@@ -741,6 +749,8 @@ class OptionsFlowHandler(OptionsFlow):
             keys = [
                 CONF_MIN_ELEVATION,
                 CONF_MAX_ELEVATION,
+                CONF_MAX_POSITION_ENTITY,
+                CONF_MIN_POSITION_ENTITY,
             ]
             self.optional_entities(keys, user_input)
             if (
@@ -780,6 +790,8 @@ class OptionsFlowHandler(OptionsFlow):
             keys = [
                 CONF_MIN_ELEVATION,
                 CONF_MAX_ELEVATION,
+                CONF_MAX_POSITION_ENTITY,
+                CONF_MIN_POSITION_ENTITY,
             ]
             self.optional_entities(keys, user_input)
             if (
@@ -815,6 +827,8 @@ class OptionsFlowHandler(OptionsFlow):
             keys = [
                 CONF_MIN_ELEVATION,
                 CONF_MAX_ELEVATION,
+                CONF_MAX_POSITION_ENTITY,
+                CONF_MIN_POSITION_ENTITY,
             ]
             self.optional_entities(keys, user_input)
             if (

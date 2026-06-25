@@ -17,6 +17,8 @@ from .const import (
     CONF_IRRADIANCE_ENTITY,
     CONF_IS_HUB,
     CONF_LUX_ENTITY,
+    CONF_MAX_POSITION_ENTITY,
+    CONF_MIN_POSITION_ENTITY,
     CONF_OUTSIDETEMP_ENTITY,
     CONF_PRESENCE_ENTITY,
     CONF_START_ENTITY,
@@ -148,6 +150,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _irradiance_entity = entry.options.get(CONF_IRRADIANCE_ENTITY)
     _outside_temp_entity = entry.options.get(CONF_OUTSIDETEMP_ENTITY)
     _start_time_entity = entry.options.get(CONF_START_ENTITY)
+    _max_position_entity = entry.options.get(CONF_MAX_POSITION_ENTITY)
+    _min_position_entity = entry.options.get(CONF_MIN_POSITION_ENTITY)
     _entities = ["sun.sun"]
     for entity in [
         _temp_entity,
@@ -158,6 +162,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _irradiance_entity,
         _outside_temp_entity,
         _start_time_entity,
+        _max_position_entity,
+        _min_position_entity,
     ]:
         if entity is not None:
             _entities.append(entity)

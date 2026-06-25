@@ -37,6 +37,8 @@ class AdaptiveGeneralCover(ABC):
     min_pos: int
     max_pos_bool: bool
     min_pos_bool: bool
+    max_position_entity: str
+    min_position_entity: str
     blind_spot_left: int
     blind_spot_right: int
     blind_spot_elevation: int
@@ -184,6 +186,30 @@ class AdaptiveGeneralCover(ABC):
             return True
         return False
 
+    def get_dynamic_max_position(self) -> int:
+        """Fetch max_position from input_number helper, fallback to static value."""
+        values = [self.max_pos]
+        if self.max_position_entity:
+            state = self.hass.states.get(self.max_position_entity)
+            if state and state.state not in ("unknown", "unavailable", None, ""):
+                try:
+                    values.append(int(float(state.state)))
+                except (ValueError, TypeError):
+                    pass  # Ignore bad value
+        return min(values)
+
+    def get_dynamic_min_position(self) -> int:
+        """Fetch min_position from input_number helper, fallback to static value."""
+        values = [self.min_pos]
+        if self.min_position_entity:
+            state = self.hass.states.get(self.min_position_entity)
+            if state and state.state not in ("unknown", "unavailable", None, ""):
+                try:
+                    values.append(int(float(state.state)))
+                except (ValueError, TypeError):
+                    pass
+        return max(values)
+
     @property
     def direct_sun_valid(self) -> bool:
         """Check if sun is directly in front of window."""
@@ -221,10 +247,12 @@ class NormalCoverState:
             self.cover.logger.debug("No sun in window: using default value (%s)", state)
 
         result = np.clip(state, 0, 100)
-        if self.cover.apply_max_position and result > self.cover.max_pos:
-            return self.cover.max_pos
-        if self.cover.apply_min_position and result < self.cover.min_pos:
-            return self.cover.min_pos
+        max_pos = self.cover.get_dynamic_max_position()
+        min_pos = self.cover.get_dynamic_min_position()
+        if self.cover.apply_max_position and result > max_pos:
+            return max_pos
+        if self.cover.apply_min_position and result < min_pos:
+            return min_pos
         return result
 
 
@@ -521,20 +549,22 @@ class ClimateCoverState(NormalCoverState):
         result = self.normal_type_cover()
         if self.climate_data.blind_type == "cover_tilt":
             result = self.tilt_state()
-        if self.cover.apply_max_position and result > self.cover.max_pos:
+        max_pos = self.cover.get_dynamic_max_position()
+        min_pos = self.cover.get_dynamic_min_position()
+        if self.cover.apply_max_position and result > max_pos:
             self.cover.logger.debug(
                 "Climate state: Max position applied (%s > %s)",
                 result,
-                self.cover.max_pos,
+                max_pos,
             )
-            return self.cover.max_pos
-        if self.cover.apply_min_position and result < self.cover.min_pos:
+            return max_pos
+        if self.cover.apply_min_position and result < min_pos:
             self.cover.logger.debug(
                 "Climate state: Min position applied (%s < %s)",
                 result,
-                self.cover.min_pos,
+                min_pos,
             )
-            return self.cover.min_pos
+            return min_pos
         return result
 
 
