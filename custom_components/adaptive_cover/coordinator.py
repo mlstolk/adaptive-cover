@@ -166,6 +166,7 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
         self._prev_dynamic_max = None
         self._prev_dynamic_min = None
         self.force_immediate_push = False
+        self._force_sequence_active = False
         self.first_refresh = False
         self.timed_refresh = False
         self.climate_state = None
@@ -446,7 +447,27 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
 
     async def async_handle_call_service(self, entity, state: int, options):
         """Handle call service."""
-        skip_cooldown = self.force_immediate_push
+        wait_flag = self.wait_for_target.get(entity, False)
+        target_reached = not wait_flag
+        if target_reached and not self.force_immediate_push:
+            # Cover has settled and there's no new shrink this cycle —
+            # the forced sequence (if any) is over, resume normal cooldowns.
+            self._force_sequence_active = False
+
+        skip_cooldown = self.force_immediate_push or self._force_sequence_active
+        self.logger.debug(
+            "async_handle_call_service for %s: state=%s, wait_for_target=%s, "
+            "force_immediate_push=%s, force_sequence_active=%s, skip_cooldown=%s, "
+            "is_cover_manual=%s, check_adaptive_time=%s",
+            entity,
+            state,
+            wait_flag,
+            self.force_immediate_push,
+            self._force_sequence_active,
+            skip_cooldown,
+            self.manager.is_cover_manual(entity),
+            self.check_adaptive_time,
+        )
         if (
             self.check_adaptive_time
             and (skip_cooldown or self.check_position_delta(entity, state, options))
@@ -609,6 +630,8 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
             shrank = True
 
         self.force_immediate_push = shrank
+        if shrank:
+            self._force_sequence_active = True
         self._prev_dynamic_max = new_max
         self._prev_dynamic_min = new_min
 
@@ -723,6 +746,12 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
     def check_position_delta(self, entity, state: int, options):
         """Check cover positions to reduce calls."""
         position = self._get_current_position(entity)
+        if position is None:
+            self.logger.debug(
+                "check_position_delta for %s: current_position is None, "
+                "returning True (no position to compare against)",
+                entity,
+            )
         if position is not None:
             condition = abs(position - state) >= self.min_change
             self.logger.debug(
