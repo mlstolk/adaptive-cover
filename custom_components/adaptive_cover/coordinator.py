@@ -447,27 +447,10 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
 
     async def async_handle_call_service(self, entity, state: int, options):
         """Handle call service."""
-        wait_flag = self.wait_for_target.get(entity, False)
-        target_reached = not wait_flag
-        if target_reached and not self.force_immediate_push:
-            # Cover has settled and there's no new shrink this cycle —
-            # the forced sequence (if any) is over, resume normal cooldowns.
-            self._force_sequence_active = False
-
-        skip_cooldown = self.force_immediate_push or self._force_sequence_active
-        self.logger.debug(
-            "async_handle_call_service for %s: state=%s, wait_for_target=%s, "
-            "force_immediate_push=%s, force_sequence_active=%s, skip_cooldown=%s, "
-            "is_cover_manual=%s, check_adaptive_time=%s",
-            entity,
-            state,
-            wait_flag,
-            self.force_immediate_push,
-            self._force_sequence_active,
-            skip_cooldown,
-            self.manager.is_cover_manual(entity),
-            self.check_adaptive_time,
-        )
+        # _force_sequence_active already covers the force_immediate_push=True
+        # case (both are set together in _check_dynamic_window_shrink), so
+        # checking it alone is sufficient here.
+        skip_cooldown = self._force_sequence_active
         if (
             self.check_adaptive_time
             and (skip_cooldown or self.check_position_delta(entity, state, options))
@@ -586,7 +569,7 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
             CONF_MIN_POSITION_ENTITY_IMMEDIATE, False
         )
 
-    def _check_dynamic_window_shrink(self, cover_data):
+    def _check_dynamic_window_shrink(self, cover_data) -> None:
         """Detect if the allowed max/min window just got smaller.
 
         If so (and the corresponding 'apply immediately' option is enabled),
@@ -595,6 +578,13 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
         like a wind/rain limit tightening a max position entity, where the
         new, stricter limit should be enforced right away rather than wait
         for the regular cooldown to elapse.
+
+        Once active, the forced sequence stays active across cycles until
+        every tracked cover has reached its last assigned target — checked
+        here, once per cycle across all of self.entities, rather than inside
+        the per-cover loop in async_handle_call_service. Clearing it there
+        instead would let one settled cover prematurely end the sequence
+        for other covers that are still mid-flight in the same entry.
         """
         new_max = cover_data.get_dynamic_max_position()
         new_min = cover_data.get_dynamic_min_position()
@@ -632,6 +622,12 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
         self.force_immediate_push = shrank
         if shrank:
             self._force_sequence_active = True
+        elif self._force_sequence_active and all(
+            not self.wait_for_target.get(entity, False) for entity in self.entities
+        ):
+            # No new shrink this cycle, and every tracked cover has reached
+            # its last assigned target — the forced sequence is over.
+            self._force_sequence_active = False
         self._prev_dynamic_max = new_max
         self._prev_dynamic_min = new_min
 

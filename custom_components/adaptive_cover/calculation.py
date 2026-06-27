@@ -192,7 +192,7 @@ class AdaptiveGeneralCover(ABC):
             return True
         return False
 
-    def get_dynamic_max_position(self) -> int:
+    def get_dynamic_max_position(self) -> int | None:
         """Fetch max_position from input_number helper, fallback to static value."""
         values = [self.max_pos]
         if self.max_position_entity:
@@ -204,7 +204,7 @@ class AdaptiveGeneralCover(ABC):
                     pass  # Ignore bad value
         return min(values)
 
-    def get_dynamic_min_position(self) -> int:
+    def get_dynamic_min_position(self) -> int | None:
         """Fetch min_position from input_number helper, fallback to static value."""
         values = [self.min_pos]
         if self.min_position_entity:
