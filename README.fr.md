@@ -259,6 +259,10 @@ Le mode sécurité ferme automatiquement les volets quand personne n'est à la m
 | Position par défaut | 60 | 0-100 | Position en l'absence d'éblouissement direct |
 | Position minimale | 100 | 0-99 | Position d'ouverture minimale — utilisée aussi par le mode sécurité en hiver/intermédiaire |
 | Position maximale | 100 | 1-100 | Position d'ouverture maximale |
+| Entité de position maximale | Aucune | | Entité qui limite dynamiquement la position maximale |
+| Appliquer l'entité maximale immédiatement | Faux | | Ignore les délais lors d'une diminution du maximum |
+| Entité de position minimale | Aucune | | Entité qui limite dynamiquement la position minimale |
+| Appliquer l'entité minimale immédiatement | Faux | | Ignore les délais lors d'une augmentation du minimum |
 | Champ de vision gauche | 90 | 1-90 | Angle de vision non obstrué à gauche de la normale de la fenêtre (°) |
 | Champ de vision droite | 90 | 1-90 | Angle de vision non obstrué à droite de la normale de la fenêtre (°) |
 | Élévation minimale | Aucune | 0-90 | Élévation solaire minimale prise en compte (°) |

@@ -259,6 +259,10 @@ Security mode closes covers automatically when nobody is home, regardless of the
 | Default Position              | 60      | 0-100 | Initial position of the cover in the absence of sunlight glare detection                                 |
 | Minimal Position              | 100     | 0-99  | Minimal opening position for the cover — also used by security mode in winter/intermediate               |
 | Maximum Position              | 100     | 1-100 | Maximum opening position for the cover                                                                   |
+| Maximum Position Entity        | None    |       | Entity that further limits the maximum position dynamically                                              |
+| Apply Maximum Entity Immediately | False | | Skip cooldowns when the dynamic maximum decreases                                                       |
+| Minimal Position Entity        | None    |       | Entity that further limits the minimal position dynamically                                               |
+| Apply Minimal Entity Immediately | False | | Skip cooldowns when the dynamic minimum increases                                                       |
 | Field of view Left            | 90      | 1-90  | Unobstructed viewing angle from window center to the left, in degrees                                    |
 | Field of view Right           | 90      | 1-90  | Unobstructed viewing angle from window center to the right, in degrees                                   |
 | Minimal Elevation             | None    | 0-90  | Minimal elevation degree of the sun to be considered                                                     |
