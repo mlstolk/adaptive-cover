@@ -76,9 +76,11 @@ from .const import (
     CONF_MAX_ELEVATION,
     CONF_MAX_POSITION,
     CONF_MAX_POSITION_ENTITY,
+    CONF_MAX_POSITION_ENTITY_IMMEDIATE,
     CONF_MIN_ELEVATION,
     CONF_MIN_POSITION,
     CONF_MIN_POSITION_ENTITY,
+    CONF_MIN_POSITION_ENTITY_IMMEDIATE,
     CONF_OUTSIDE_THRESHOLD,
     CONF_OUTSIDETEMP_ENTITY,
     CONF_PRESENCE_ENTITY,
@@ -161,6 +163,9 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
         )
         self.state_change = False
         self.cover_state_change = False
+        self._prev_dynamic_max = None
+        self._prev_dynamic_min = None
+        self.force_immediate_push = False
         self.first_refresh = False
         self.timed_refresh = False
         self.climate_state = None
@@ -284,6 +289,8 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
         self._update_options(options)
 
         cover_data = self.get_blind_data(options=options)
+
+        self._check_dynamic_window_shrink(cover_data)
 
         self._update_manager_and_covers()
 
@@ -439,10 +446,11 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
 
     async def async_handle_call_service(self, entity, state: int, options):
         """Handle call service."""
+        skip_cooldown = self.force_immediate_push
         if (
             self.check_adaptive_time
-            and self.check_position_delta(entity, state, options)
-            and self.check_time_delta(entity)
+            and (skip_cooldown or self.check_position_delta(entity, state, options))
+            and (skip_cooldown or self.check_time_delta(entity))
             and not self.manager.is_cover_manual(entity)
         ):
             await self.async_set_position(entity, state)
@@ -550,6 +558,59 @@ class AdaptiveDataUpdateCoordinator(DataUpdateCoordinator[AdaptiveCoverData]):
         self.end_value = options.get(CONF_INTERP_END)
         self.normal_list = options.get(CONF_INTERP_LIST)
         self.new_list = options.get(CONF_INTERP_LIST_NEW)
+        self.max_position_immediate = options.get(
+            CONF_MAX_POSITION_ENTITY_IMMEDIATE, False
+        )
+        self.min_position_immediate = options.get(
+            CONF_MIN_POSITION_ENTITY_IMMEDIATE, False
+        )
+
+    def _check_dynamic_window_shrink(self, cover_data):
+        """Detect if the allowed max/min window just got smaller.
+
+        If so (and the corresponding 'apply immediately' option is enabled),
+        set force_immediate_push so the next position push skips the
+        position-delta and time-delta cooldowns. This is meant for cases
+        like a wind/rain limit tightening a max position entity, where the
+        new, stricter limit should be enforced right away rather than wait
+        for the regular cooldown to elapse.
+        """
+        new_max = cover_data.get_dynamic_max_position()
+        new_min = cover_data.get_dynamic_min_position()
+
+        shrank = False
+
+        if (
+            self.max_position_immediate
+            and cover_data.apply_max_position
+            and self._prev_dynamic_max is not None
+            and new_max is not None
+            and new_max < self._prev_dynamic_max
+        ):
+            self.logger.debug(
+                "Dynamic max position window shrank (%s -> %s), forcing immediate push",
+                self._prev_dynamic_max,
+                new_max,
+            )
+            shrank = True
+
+        if (
+            self.min_position_immediate
+            and cover_data.apply_min_position
+            and self._prev_dynamic_min is not None
+            and new_min is not None
+            and new_min > self._prev_dynamic_min
+        ):
+            self.logger.debug(
+                "Dynamic min position window shrank (%s -> %s), forcing immediate push",
+                self._prev_dynamic_min,
+                new_min,
+            )
+            shrank = True
+
+        self.force_immediate_push = shrank
+        self._prev_dynamic_max = new_max
+        self._prev_dynamic_min = new_min
 
     def _update_manager_and_covers(self):
         self.manager.add_covers(self.entities)

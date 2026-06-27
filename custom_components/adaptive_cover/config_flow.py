@@ -77,6 +77,8 @@ from .const import (
     CONF_ENABLE_MIN_POSITION,
     CONF_MAX_POSITION_ENTITY,
     CONF_MIN_POSITION_ENTITY,
+    CONF_MAX_POSITION_ENTITY_IMMEDIATE,
+    CONF_MIN_POSITION_ENTITY_IMMEDIATE,
     CONF_IS_HUB,
     ALL_BLINDS_TITLE,
 )
@@ -129,6 +131,12 @@ OPTIONS = vol.Schema(
         vol.Optional(CONF_MIN_POSITION_ENTITY): selector.EntitySelector(
             selector.EntitySelectorConfig(domain=["input_number"])
         ),
+        vol.Optional(
+            CONF_MAX_POSITION_ENTITY_IMMEDIATE, default=False
+        ): selector.BooleanSelector(),
+        vol.Optional(
+            CONF_MIN_POSITION_ENTITY_IMMEDIATE, default=False
+        ): selector.BooleanSelector(),
         vol.Optional(CONF_MIN_ELEVATION): vol.All(
             vol.Coerce(int), vol.Range(min=0, max=90)
         ),
@@ -627,6 +635,12 @@ class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                 ),
                 CONF_MAX_POSITION_ENTITY: self.config.get(CONF_MAX_POSITION_ENTITY),
                 CONF_MIN_POSITION_ENTITY: self.config.get(CONF_MIN_POSITION_ENTITY),
+                CONF_MAX_POSITION_ENTITY_IMMEDIATE: self.config.get(
+                    CONF_MAX_POSITION_ENTITY_IMMEDIATE, False
+                ),
+                CONF_MIN_POSITION_ENTITY_IMMEDIATE: self.config.get(
+                    CONF_MIN_POSITION_ENTITY_IMMEDIATE, False
+                ),
                 CONF_FOV_LEFT: self.config.get(CONF_FOV_LEFT),
                 CONF_FOV_RIGHT: self.config.get(CONF_FOV_RIGHT),
                 CONF_ENTITIES: self.config.get(CONF_ENTITIES),

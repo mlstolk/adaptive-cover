@@ -171,7 +171,10 @@ class AdaptiveGeneralCover(ABC):
     @property
     def apply_min_position(self) -> bool:
         """Check if min position is applied."""
-        if self.min_pos is not None and self.min_pos != 0:  # noqa: C0121
+        has_limit = (self.min_pos is not None and self.min_pos != 0) or bool(  # noqa: C0121
+            self.min_position_entity
+        )
+        if has_limit:
             if self.min_pos_bool:
                 return self.direct_sun_valid
             return True
@@ -180,7 +183,10 @@ class AdaptiveGeneralCover(ABC):
     @property
     def apply_max_position(self) -> bool:
         """Check if max position is applied."""
-        if self.max_pos is not None and self.max_pos != 100:
+        has_limit = (self.max_pos is not None and self.max_pos != 100) or bool(
+            self.max_position_entity
+        )
+        if has_limit:
             if self.max_pos_bool:
                 return self.direct_sun_valid
             return True
@@ -249,9 +255,9 @@ class NormalCoverState:
         result = np.clip(state, 0, 100)
         max_pos = self.cover.get_dynamic_max_position()
         min_pos = self.cover.get_dynamic_min_position()
-        if self.cover.apply_max_position and result > max_pos:
+        if self.cover.apply_max_position and max_pos is not None and result > max_pos:
             return max_pos
-        if self.cover.apply_min_position and result < min_pos:
+        if self.cover.apply_min_position and min_pos is not None and result < min_pos:
             return min_pos
         return result
 
@@ -551,14 +557,14 @@ class ClimateCoverState(NormalCoverState):
             result = self.tilt_state()
         max_pos = self.cover.get_dynamic_max_position()
         min_pos = self.cover.get_dynamic_min_position()
-        if self.cover.apply_max_position and result > max_pos:
+        if self.cover.apply_max_position and max_pos is not None and result > max_pos:
             self.cover.logger.debug(
                 "Climate state: Max position applied (%s > %s)",
                 result,
                 max_pos,
             )
             return max_pos
-        if self.cover.apply_min_position and result < min_pos:
+        if self.cover.apply_min_position and min_pos is not None and result < min_pos:
             self.cover.logger.debug(
                 "Climate state: Min position applied (%s < %s)",
                 result,
